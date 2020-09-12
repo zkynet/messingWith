@@ -37,7 +37,6 @@ func raw_connect(host string, port string) {
 			WaitGroup.Done()
 			log.Println(r)
 		} else {
-
 			WaitGroup.Done()
 		}
 	}()
