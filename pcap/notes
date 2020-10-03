@@ -1,0 +1,4 @@
+https://www.devdungeon.com/content/packet-capture-injection-and-analysis-gopacket
+https://godoc.org/github.com/google/gopacket
+https://godoc.org/github.com/google/gopacket/pcap#Handle.WritePacketData
+https://www.tcpdump.org/manpages/pcap-filter.7.html

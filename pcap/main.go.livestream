@@ -1,0 +1,68 @@
+package main
+
+import (
+	"log"
+	"strings"
+	"time"
+
+	"github.com/google/gopacket"
+	"github.com/google/gopacket/pcap"
+)
+
+var (
+	device       string = "lo"
+	snapshot_len int32  = 1024
+	promiscuous  bool   = false
+	err          error
+	timeout      time.Duration = 30 * time.Second
+	handle       *pcap.Handle
+)
+
+type Connection struct {
+	Source     string
+	Dest       string
+	SourcePort string
+	DestPort   string
+	Bytes      []int64
+	count      int64
+	TotalBytes int64
+	User       string
+	Password   string
+}
+
+func main() {
+	// Open device
+	handle, err = pcap.OpenLive(device, snapshot_len, promiscuous, timeout)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer handle.Close()
+	log.Println([]byte("ACK="))
+	// Use the handle as a packet source to process all packets
+	packetSource := gopacket.NewPacketSource(handle, handle.LinkType())
+	for packet := range packetSource.Packets() {
+		// Process packet here
+		packetByte := packet.String()
+
+		stuff := packet.TransportLayer()
+		log.Println(stuff.TransportFlow)
+		ackindex := strings.Index(packetByte, "ACK=")
+		if ackindex != -1 {
+			log.Println(packetByte[ackindex : ackindex+10])
+		}
+		log.Println("=======================================")
+		if packet.Layer(2) != nil {
+			// log.Println(packet.Layer(2).LayerPayload())
+			// log.Println(string(packet.Layer(2).LayerContents()))
+
+		}
+		// log.Println(packet.String())
+		// log.Println(packet)
+		log.Println("=======================================")
+		layer := packet.ApplicationLayer()
+		if layer != nil {
+
+			// log.Println(string(packet.ApplicationLayer().Payload()))
+		}
+	}
+}
